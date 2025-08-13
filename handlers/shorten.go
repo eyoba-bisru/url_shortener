@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/eyoba-bisru/url_shortener/config"
@@ -12,8 +12,6 @@ import (
 )
 
 const base62 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
-const shortURLPrefix = "http://localhost:8080/"
 
 func generateShortCode(length int) string {
 	code := make([]byte, length)
@@ -26,6 +24,8 @@ func generateShortCode(length int) string {
 const cacheTTL = 24 * time.Hour
 
 func ShortenURL(c *gin.Context) {
+	shortURLPrefix := os.Getenv("BASE_URL")
+
 	var request struct {
 		URL string `json:"url" binding:"required,url"`
 	}
@@ -37,7 +37,6 @@ func ShortenURL(c *gin.Context) {
 
 	var existing models.URL
 	if err := config.DB.Where("original_url = ?", request.URL).First(&existing).Error; err == nil {
-		log.Println(existing.ShortCode)
 		config.RedisClient.Set(config.Ctx, existing.ShortCode, existing.OriginalURL, cacheTTL)
 		c.JSON(http.StatusOK, gin.H{"short_url": shortURLPrefix + existing.ShortCode})
 		return
@@ -46,6 +45,7 @@ func ShortenURL(c *gin.Context) {
 	// Generate a unique code
 	shortCode := generateShortCode(6)
 
+	// Check if it is unique; if not retry
 	for {
 		var temp models.URL
 		if err := config.DB.Where("short_code = ?", shortCode).First(&temp).Error; err != nil {
@@ -68,6 +68,6 @@ func ShortenURL(c *gin.Context) {
 	config.RedisClient.Set(config.Ctx, shortCode, request.URL, cacheTTL)
 
 	c.JSON(http.StatusOK, gin.H{
-		"short_url": "http://localhost:8080/" + shortCode,
+		"short_url": shortURLPrefix + shortCode,
 	})
 }
