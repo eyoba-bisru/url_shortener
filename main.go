@@ -43,6 +43,7 @@ func main() {
 	})
 
 	r.POST("/shorten", handlers.ShortenURL)
+	r.GET("/:code", handlers.Redirect)
 
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
