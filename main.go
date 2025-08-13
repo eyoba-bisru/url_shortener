@@ -42,9 +42,7 @@ func main() {
 		})
 	})
 
-	api := r.Group("/api/v1")
-
-	api.POST("/shorten", handlers.ShortenURL)
+	r.POST("/shorten", handlers.ShortenURL)
 
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
