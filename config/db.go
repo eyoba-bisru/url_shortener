@@ -11,9 +11,9 @@ import (
 )
 
 var (
-	DB  *gorm.DB
-	RDB *redis.Client
-	ctx = context.Background()
+	DB          *gorm.DB
+	RedisClient *redis.Client
+	Ctx         = context.Background()
 )
 
 func ConnectDB() {
@@ -26,10 +26,10 @@ func ConnectDB() {
 	}
 
 	// Initialize Redis connection
-	RDB = redis.NewClient(&redis.Options{
+	RedisClient = redis.NewClient(&redis.Options{
 		Addr: "localhost:6379",
 	})
-	_, err = RDB.Ping(ctx).Result()
+	_, err = RedisClient.Ping(Ctx).Result()
 	if err != nil {
 		log.Fatalf("failed to connect to redis: %v", err)
 	}
