@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/eyoba-bisru/url_shortener/backend/models"
 	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -33,4 +34,6 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatalf("failed to connect to redis: %v", err)
 	}
+
+	DB.AutoMigrate(&models.URL{})
 }

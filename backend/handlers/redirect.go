@@ -3,8 +3,8 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/eyoba-bisru/url_shortener/config"
-	"github.com/eyoba-bisru/url_shortener/models"
+	"github.com/eyoba-bisru/url_shortener/backend/config"
+	"github.com/eyoba-bisru/url_shortener/backend/models"
 	"github.com/gin-gonic/gin"
 )
 
